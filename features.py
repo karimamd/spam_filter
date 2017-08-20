@@ -1,9 +1,11 @@
 import email
+from num2words import num2words
 from bs4 import BeautifulSoup
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import stopwords,wordnet
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 stop = set(stopwords.words("english"))
+
 def email_parser (email_text, overwrite_b=None):
     b = None
     props = {}
@@ -39,6 +41,7 @@ def email_parser (email_text, overwrite_b=None):
         for key in obj_props.keys():
             props[key] = obj_props[key]
     return props
+
 def morphy_to_wordnet(tag):
     if tag.startswith("N"):
         return wordnet.NOUN
@@ -49,11 +52,22 @@ def morphy_to_wordnet(tag):
     elif tag.startswith("R"):
         return wordnet.ADV
     return wordnet.NOUN
+
 def lemmatize_string (text):
+    import pdb
+    text = text.replace("$", " dollars ")
+    for num_start in range(len(text)):
+        if text[num_start].isdigit():
+            num_end = num_start
+            while True:
+                num_end += 1
+                if not text[num_end].isdigit() or num_end > len(text):
+                    break
+            text = text.replace(text[num_start: num_end], " "+num2words(int(text[num_start: num_end])) + " ")
     lemmatized_list = []
     lemmatizer = WordNetLemmatizer()
     stemmer = PorterStemmer()
-    text = ''.join(c if c.isalnum() else " " for c in text)
+    text = ''.join(c if c.isalpha() else " " for c in text)
     tokens = text.split(" ")
     while "" in tokens:
         tokens.remove("")
