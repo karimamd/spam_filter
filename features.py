@@ -1,4 +1,5 @@
 import email
+from bs4 import BeautifulSoup
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import stopwords,wordnet
 from nltk.stem import WordNetLemmatizer, PorterStemmer
@@ -17,6 +18,9 @@ def email_parser (email_text, overwrite_b=None):
         content_type = b.get("content-type")
         if content_type is None or "text/plain" in content_type:
             props["body"] = p
+        elif "text/html" in content_type:
+            soup = BeautifulSoup(p)
+            props["body"] = soup.get_text()
         elif "application/pgp-signature" in content_type:
             props["pgp"] = True
         else:
