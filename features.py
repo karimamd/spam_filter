@@ -1,11 +1,11 @@
 import email
 from num2words import num2words
+import re
 from bs4 import BeautifulSoup
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import stopwords,wordnet
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 stop = set(stopwords.words("english"))
-
 def email_parser (email_text, overwrite_b=None):
     b = None
     props = {}
@@ -17,14 +17,22 @@ def email_parser (email_text, overwrite_b=None):
     p = b.get_payload()
         
     if b.is_multipart() == False:
-        content_type = b.get("content-type")
+        try:
+            content_type = b.get("content-type").lower()
+        except:
+            content_type = None
         if content_type is None or "text/plain" in content_type:
             props["body"] = p
         elif "text/html" in content_type:
-            soup = BeautifulSoup(p)
+            soup = BeautifulSoup(p, "lxml")
             props["body"] = soup.get_text()
-        elif "application/pgp-signature" in content_type:
-            props["pgp"] = True
+        elif "application/pgp-signature" in content_type or "application/x-pkcs7-signature" in content_type:
+            props["sig"] = True
+        elif "application" in content_type or "video" in content_type or "image" in content_type:
+            props["attach"] = True
+        elif "text/rfc822-headers" in content_type or "multipart" in content_type:
+            # put something rational here!
+            2+5
         else:
             print("Encountered strange content-type: " + content_type)
         return props
@@ -54,8 +62,8 @@ def morphy_to_wordnet(tag):
     return wordnet.NOUN
 
 def lemmatize_string (text):
-    import pdb
     text = text.replace("$", " dollars ")
+    text = re.sub(r"((http|https|ftp)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*)|([\w\.-]+@[\w\.-]+\b)"," ", text)
     for num_start in range(len(text)):
         if text[num_start].isdigit():
             num_end = num_start
@@ -63,7 +71,12 @@ def lemmatize_string (text):
                 num_end += 1
                 if not text[num_end].isdigit() or num_end > len(text):
                     break
-            text = text.replace(text[num_start: num_end], " "+num2words(int(text[num_start: num_end])) + " ")
+            try:
+                text = text.replace(text[num_start: num_end], " "+num2words(int(text[num_start: num_end])) + " ")
+            except:
+                text = text.replace(text[num_start: num_end], " ")
+    for i in range(10):
+        text = text.replace(num2words(i), " ")
     lemmatized_list = []
     lemmatizer = WordNetLemmatizer()
     stemmer = PorterStemmer()
