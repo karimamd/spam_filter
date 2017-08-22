@@ -1,10 +1,10 @@
 from collections import Counter
 from features import *
-import os, os.path
+import  os.path
 import sys
 emails_data = {"body":"", "sig":0, "attach":0, "count":0}
 import pdb
-#pdb.set_trace()
+pdb.set_trace()
 directory = input("Directory: ")
 output_name = input("Output: ")
 for root, _, files in os.walk(directory):

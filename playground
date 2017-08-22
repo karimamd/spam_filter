@@ -1,0 +1,7 @@
+prediction function should:
+1-take email as input
+2-tokenize and stem it
+3-get probability of each word in spam and non spam mails
+    if word is not available in one then probability is 1/total number of words (or total in spam and non spam separately)
+4-calculate probability of spam and non spam by multiplying probabilities of each word
+5-choosing the heights value as the determinant
