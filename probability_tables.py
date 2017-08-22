@@ -9,19 +9,19 @@ def remove_big_words_from_list():
         if len(i[0]) > 14:
             eham.remove(i)
         else:
-            ehamCounter+=int(i[i])
+            ehamCounter+=int(i[1])
 
     for i in spam:
         if len(i[0]) > 14:
             spam.remove(i)
         else:
-            spamCounter+=int(i[i])
+            spamCounter+=int(i[1])
 
     for i in hham:
         if len(i[0]) > 14:
             hham.remove(i)
         else:
-            hhamCounter+=int(i[i])
+            hhamCounter+=int(i[1])
     return eham,hham,spam,ehamCounter,hhamCounter,spamCounter
 
 

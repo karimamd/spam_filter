@@ -1,5 +1,12 @@
 from probability_tables import *
+from math import log10
 from features import *
+
+#extras
+from collections import Counter
+import  os.path
+import sys
+
 def word_spam_probability(word,spamCounter):
 
     #TODO implement a better and faster search
@@ -7,12 +14,13 @@ def word_spam_probability(word,spamCounter):
         if i[0]==word:
             if i[1]!= 0:
                 probability=int(i[1])*1.0/spamCounter
+                #print(i[0]+" spam "+str(abs(log10(probability))))
             else:
                 probability=1.0/(spamCounter+1)
-         else:
-             probability = 1.0 / (spamCounter+1)
+        else:
+            probability = 1.0 / (spamCounter+1)
 
-      return probability
+    return probability
 
 def word_ham_probability(word,ehamCounter,hhamCounter):
     # TODO implement a better and faster search
@@ -44,7 +52,7 @@ probability_spam=1
 probability_ham=1
 #mail_words is list of stemmed words in fount in the input mail
 #TODO choose proper input method for email , a file for example
-mail="my naming is kareem name,far"
+mail="mail hundr free"
 
 
 parsed_email=email_parser(mail)
@@ -52,15 +60,43 @@ body_dictionary=lemmatize_string(parsed_email["body"])
 mail_words=body_dictionary.split(" ")
 print(mail_words)
 
-for i in spam:
-    if i[0]=="dog":
-        print("found")
-        print(i)
 
 for each_word in mail_words:
     probability_spam*=word_spam_probability(each_word,spamCounter)
     probability_ham*=word_ham_probability(each_word,ehamCounter,hhamCounter)
-if probability_spam>probability_ham:
+#we use less than for spam because we take log so the one with the lowest power will be the smallest
+if abs(log10(probability_spam)) < abs(log10(probability_ham)):
     print("spam mail")
 else:
     print ("non-spam mail")
+
+
+#test
+#user input directory name containing files of testing (mails)
+directory = input("Directory: ")
+spam_mails=0
+ham_mails=0
+total=0
+for root, _, files in os.walk(directory):
+    for file_obj in files:
+        total+=1
+        file_name = os.path.join(root, file_obj)
+        # open each file in directory and read them
+        with open(file_name, errors="replace") as f:
+            mail = f.read()
+        parsed_email = email_parser(mail)
+        body_dictionary = lemmatize_string(parsed_email["body"])
+        mail_words = body_dictionary.split(" ")
+        probability_spam = 1
+        probability_ham = 1
+        for each_word in mail_words:
+            probability_spam *= word_spam_probability(each_word, spamCounter)
+            probability_ham *= word_ham_probability(each_word, ehamCounter, hhamCounter)
+        # we use less than for spam because we take log so the one with the lowest power will be the smallest
+        if abs(log10(probability_spam)) < abs(log10(probability_ham)):
+            spam_mails+=1
+        else:
+            ham_mails+=1
+
+print("accuracy : "+ 1.0*ham_mails/total)
+print("spam "+spam_mails+" ham "+ham_mails +" total "+total)
