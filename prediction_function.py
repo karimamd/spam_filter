@@ -79,6 +79,8 @@ ham_mails=0
 total=0
 for root, _, files in os.walk(directory):
     for file_obj in files:
+        sys.stdout.write(".")
+        sys.stdout.flush()
         total+=1
         file_name = os.path.join(root, file_obj)
         # open each file in directory and read them
@@ -93,10 +95,10 @@ for root, _, files in os.walk(directory):
             probability_spam *= word_spam_probability(each_word, spamCounter)
             probability_ham *= word_ham_probability(each_word, ehamCounter, hhamCounter)
         # we use less than for spam because we take log so the one with the lowest power will be the smallest
-        if abs(log10(probability_spam)) < abs(log10(probability_ham)):
+        if probability_spam < probability_ham:
             spam_mails+=1
         else:
             ham_mails+=1
 
-print("accuracy : "+ 1.0*ham_mails/total)
-print("spam "+spam_mails+" ham "+ham_mails +" total "+total)
+print("ham : "+ str(1.0*ham_mails/total))
+print("spam: " + str(1.0*spam_mails/total))
