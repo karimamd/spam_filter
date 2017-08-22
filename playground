@@ -5,3 +5,14 @@ prediction function should:
     if word is not available in one then probability is 1/total number of words (or total in spam and non spam separately)
 4-calculate probability of spam and non spam by multiplying probabilities of each word
 5-choosing the heights value as the determinant
+
+
+probability tables:
+
+we need to calculate probability of each word in our dictionary in spam/ham mails
+1-search for word in list of spam words (list called spam) and lists of ham words(eham and hham) and see how many times these are
+probable (number of occurrence of word  /   number of occurrence of all words in spam/ham mail ?)
+number of occurrence of all words == total number of words in all mails (stop words are excluded)
+
+*maybe we will need to sort lists of tuples(spam/eham/hham) alphabetically to search for words easily
+
