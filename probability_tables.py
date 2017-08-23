@@ -1,25 +1,30 @@
 from spam import *
-from hham import *
-from eham import *
+from ham import *
 #words > 9 charachters are probably non english meaningful  words
 #and counts number of all words(excluding filtered ones) in spam/eham/hham mails (summation of occurrences of all words)
+#TODO this should be done while stemming!
 def remove_big_words_from_list():
-    ehamCounter,hhamCounter,spamCounter=0,0,0
-    for i in eham:
-        if len(i[0]) > 9 or len(i[0]) == 1:
-            eham.remove(i)
+    hamCounter,spamCounter=0,0
+    del_set = set(list("abcdefghijklmnopqrstuvwxyz"))
+    for key in ham.keys():
+        if key.isupper():
+            continue
+        if len(key) > 9:
+            del_set.add(key)
         else:
-            ehamCounter+=int(i[1])
-
-    for i in spam:
-        if len(i[0]) > 9 or len(i[0]) == 1:
-            spam.remove(i)
+            hamCounter += ham[key]
+    for word in del_set:
+        del ham[word]
+    
+    del_set = set(list("abcdefghijklmnopqrstuvwxyz"))
+    for key in spam.keys():
+        if key.isupper():
+            continue
+        if len(key) > 9:
+            del_set.add(key)
         else:
-            spamCounter+=int(i[1])
-
-    for i in hham:
-        if len(i[0]) > 9 or len(i[0]) == 1:
-            hham.remove(i)
-        else:
-            hhamCounter+=int(i[1])
-    return eham,hham,spam,ehamCounter,hhamCounter,spamCounter
+            spamCounter += spam[key]
+    
+    for word in del_set:
+        del ham[word]
+    return ham,spam,hamCounter,spamCounter

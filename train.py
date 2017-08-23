@@ -37,6 +37,7 @@ c["COUNT"] = emails_data["count"]
 for word in emails_data["body"].split(" "):
     c[word] += 1
 print ("\n Unique Words: " + str(len(s)))
-with open(output_name, "w") as o:
-    o.write(str(c.most_common()))
+with open(output_name + ".py", "w") as o:
+    o.write("from collections import Counter\n" + output_name + " = ")
+    o.write(str(c))
     o.close()

@@ -6,30 +6,21 @@ from features import *
 from collections import Counter
 import  os.path
 import sys
-eham,hham,spam,ehamCounter,hhamCounter,spamCounter=remove_big_words_from_list()
-ham = eham
-hamCounter = ehamCounter
-counter = ehamCounter + spamCounter
+ham,spam,hamCounter,spamCounter=remove_big_words_from_list()
+counter = hamCounter + spamCounter
 def word_spam_probability(word):
 
     #TODO implement a better and faster search
-    probability = 1.0 / (counter+1)
-    for i in spam:
-        if i[0]==word:
-            if i[1]!= 0:
-                probability=int(i[1])*1.0/spamCounter
-                break;
+    probability = spam[word] /spamCounter
+    if probability == 0:
+        probability = 1.0 / (counter+1)
     return probability
 
 def word_ham_probability(word):
-    # TODO implement a better and faster search
-    #TODO check for improvements on using eham or hham or both
-    probability = 1.0 / (counter+1)
-    for i in ham:
-        if i[0] == word and i[1] != 0:
-                probability = int(i[1]) * 1.0 / hamCounter
-                break;
-
+    
+    probability = ham[word] * 1.0 / hamCounter
+    if probability == 0:
+        probability = 1.0 / (counter+1)
     return probability
 
 
