@@ -2,6 +2,8 @@ from collections import Counter
 from features import *
 import  os.path
 import sys
+import pdb
+pdb.set_trace()
 emails_data = {"body":"", "sig":0, "attach":0, "count":0}
 #python debugger
 #import pdb
@@ -16,7 +18,7 @@ for root, _, files in os.walk(directory):
     for file_obj in files:
         file_name = os.path.join(root, file_obj)
         #next two lines print a '.' on reading each file to show progress
-        sys.stdout.write('\x1b[1A'+'\x1b[2K'+"Learned emails: "+str(emails_data["count"])+"\n")
+        sys.stdout.write(('\x1b[1A'+'\x1b[2K')*2+file_name+"\nLearned emails: "+str(emails_data["count"])+"\n")
         sys.stdout.flush()
         #open each file in directory and read them
         with open(file_name, errors="replace") as f:
@@ -35,9 +37,25 @@ c = Counter()
 c["SIG"] = emails_data["sig"]
 c["ATT"] = emails_data["attach"]
 c["COUNT"] = emails_data["count"]
-for word in emails_data["body"].split(" "):
-    c[word] += 1
-print ("\n Unique Words: " + str(len(s)))
+words = emails_data["body"].split(" ")
+
+for i in range(len(words) - 2):
+    word1 = words[i]
+    word2 = words[i+1]
+    word3 = words[i+2]
+    c[word1] += 1
+    c[word1+" "+word2] += 1
+    c[word1+" "+word2+" "+word3] += 1
+
+del_set = set()
+for word in c.keys():
+    if len(word) == 1 or c[word] < 10:
+        del_set.add(word)
+for word in del_set:
+    del c[word]
+
+print ("\n Unique Combinatations: " + str(len(s)))
+
 with open(output_name + ".py", "w") as o:
     o.write("from collections import Counter\n" + output_name + " = ")
     o.write(str(c))

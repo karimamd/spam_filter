@@ -25,11 +25,25 @@ def word_ham_probability(word):
 def classify_stemmed_text(txt):
     pham =  log10(1-PHAM) - log10(PHAM)   # likely hood of ham on log scale
     pspam = log10(1-PSPAM) - log10(PSPAM)   # likely hood of spam log scale
-    for word in txt.split(" "):
-        wsp = word_spam_probability(word) # word spam probability
+    words = txt.split(" ")
+    for i in range(len(words) - 2):
+        word1 = words[i]
+        word2 = words[i + 1]
+        word3 = words[i + 2]
+        wsp = word_spam_probability(word1) # word spam probability
         pspam += log10(1-wsp) - log10(wsp)
-        whp = word_ham_probability(word) # word ham probability
+        whp = word_ham_probability(word1) # word ham probability
         pham += log10(1-whp) - log10(whp)
+
+        wsp = word_spam_probability(word1 + " " + word2) # 2 word spam probability
+        pspam += log10(1-wsp) - log10(wsp)
+        whp = word_ham_probability(word1 + " " + word2) # word ham probability
+        pham += log10(1-whp) - log10(whp)
+        wsp = word_spam_probability(word1 + " " + word2 + " " + word3) # word spam probability
+        pspam += log10(1-wsp) - log10(wsp)
+        whp = word_ham_probability(word1 + " " + word2 + " " + word3) # word ham probability
+        pham += log10(1-whp) - log10(whp)
+
     if pham < pspam:
         return "HAM"
     else:

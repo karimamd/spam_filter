@@ -5,26 +5,9 @@ from ham import *
 #TODO this should be done while stemming!
 def remove_big_words_from_list():
     hamCounter,spamCounter=0,0
-    del_set = set(list("abcdefghijklmnopqrstuvwxyz"))
     for key in ham.keys():
-        if key.isupper():
-            continue
-        if len(key) > 9:
-            del_set.add(key)
-        else:
-            hamCounter += ham[key]
-    for word in del_set:
-        del ham[word]
-    
-    del_set = set(list("abcdefghijklmnopqrstuvwxyz"))
+        hamCounter += ham[key]
     for key in spam.keys():
-        if key.isupper():
-            continue
-        if len(key) > 9:
-            del_set.add(key)
-        else:
-            spamCounter += spam[key]
+        spamCounter += spam[key]
     
-    for word in del_set:
-        del ham[word]
     return ham,spam,hamCounter,spamCounter

@@ -1,6 +1,8 @@
 import email
 from num2words import num2words
 import re
+from names import *
+from countries import *
 from bs4 import BeautifulSoup
 from nltk import word_tokenize, pos_tag
 from nltk.corpus import stopwords,wordnet
@@ -57,13 +59,18 @@ def morphy_to_wordnet(tag):
     return wordnet.NOUN
 
 def lemmatize_string (text):
-    text = re.sub(r"([\w\.-]+@[\w\.-]+\b)", " repmail ", text)
-    text = re.sub(r"((http|https|ftp)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*)"," rpwbst ", text)
-    text = re.sub(r"(\d+/\d+/\d+)", " repdate ", text)
-    text = re.sub(r"(\d+:\d+:\d+)|(\d+:\d+)", " reptime ", text)
-    text = re.sub(r"\d+.\d+.\d+", " repvrson ", text)
+    text = re.sub(r"([\w\.-]+@[\w\.-]+\b)", " regexmail ", text)
+    text = re.sub(r"((http|https|ftp)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*)"," regexsite ", text)
+    text = re.sub(r"(\d+/\d+/\d+)", " regexdaymonthyear ", text)
+    text = re.sub(r"(\d+:\d+:\d+)|(\d+:\d+)", " regextime ", text)
+    text = re.sub(r"\d+.\d+.\d+", " regexdaymonthyear ", text)
     text = re.sub(r"\$\S*\d", " dollars 1", text)
-    text = re.sub(r"\d*.\d+", " repfrctn ", text)
+    text = re.sub(r"\d*.\d+", " regexfraction ", text)
+    text = text.replace("!", " regexexcmark ")
+    for name in names:
+        text = text.replace("name", " regexname ")
+    for country in countries:
+        text = text.replace(country, " regexcountry ")
     for num_start in range(len(text)):
         if text[num_start].isdigit():
             num_end = num_start
