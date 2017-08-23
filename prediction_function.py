@@ -6,7 +6,7 @@ from features import *
 from collections import Counter
 import  os.path
 import sys
-PSPAM = 0.1
+PSPAM = 0.5
 PHAM = 1 - PSPAM
 ham,spam,hamCounter,spamCounter=remove_big_words_from_list()
 counter = hamCounter + spamCounter

@@ -2,12 +2,7 @@ from collections import Counter
 from features import *
 import  os.path
 import sys
-import pdb
-pdb.set_trace()
 emails_data = {"body":"", "sig":0, "attach":0, "count":0}
-#python debugger
-#import pdb
-#pdb.set_trace()
 #user input directory name containing files of training (mails)
 directory = input("Directory: ")
 #user inputs the output file names where we will print stemmed filtered words of mails with their numbers
