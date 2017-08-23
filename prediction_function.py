@@ -11,20 +11,16 @@ PHAM = 1 - PSPAM
 ham,spam,hamCounter,spamCounter=remove_big_words_from_list()
 counter = hamCounter + spamCounter
 def word_spam_probability(word):
-
-    #TODO implement a better and faster search
     probability = spam[word] /spamCounter
     if probability == 0:
         probability = 1.0 / (counter+1)
     return probability
 
 def word_ham_probability(word):
-    
     probability = ham[word] * 1.0 / hamCounter
     if probability == 0:
         probability = 1.0 / (counter+1)
     return probability
-
 
 def classify_stemmed_text(txt):
     pham =  log10(1-PHAM) - log10(PHAM)   # likely hood of ham on log scale
@@ -55,13 +51,15 @@ if __name__ == '__main__':
         for file_obj in files:
             sys.stdout.write(".")
             sys.stdout.flush()
-            total+=1
             file_name = os.path.join(root, file_obj)
             # open each file in directory and read them
             with open(file_name, errors="replace") as f:
                 mail = f.read()
             parsed_email = email_parser(mail)
+            if "body" not in parsed_email.keys():
+                continue
             body_txt = lemmatize_string(parsed_email["body"])
+            total += 1
             if classify_stemmed_text(body_txt) == "SPAM":
                 spam_mails+=1
             else:
