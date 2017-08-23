@@ -5,17 +5,18 @@ import sys
 emails_data = {"body":"", "sig":0, "attach":0, "count":0}
 #python debugger
 #import pdb
-#db.set_trace()
+#pdb.set_trace()
 #user input directory name containing files of training (mails)
 directory = input("Directory: ")
 #user inputs the output file names where we will print stemmed filtered words of mails with their numbers
 output_name = input("Output: ")
 #loop over all files in directory
+print("")
 for root, _, files in os.walk(directory):
     for file_obj in files:
         file_name = os.path.join(root, file_obj)
         #next two lines print a '.' on reading each file to show progress
-        sys.stdout.write(".")
+        sys.stdout.write('\x1b[1A'+'\x1b[2K'+"Learned emails: "+str(emails_data["count"])+"\n")
         sys.stdout.flush()
         #open each file in directory and read them
         with open(file_name, errors="replace") as f:

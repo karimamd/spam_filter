@@ -30,11 +30,6 @@ def email_parser (email_text, overwrite_b=None):
             props["sig"] = True
         elif "application" in content_type or "video" in content_type or "image" in content_type:
             props["attach"] = True
-        elif "text/rfc822-headers" in content_type or "multipart" in content_type:
-            # put something rational here!
-            2+5
-        else:
-            print("Encountered strange content-type: " + content_type)
         return props
     for obj in p:
         obj_props = email_parser("", obj)
@@ -62,14 +57,19 @@ def morphy_to_wordnet(tag):
     return wordnet.NOUN
 
 def lemmatize_string (text):
-    text = text.replace("$", " dollars ")
-    text = re.sub(r"((http|https|ftp)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*)|([\w\.-]+@[\w\.-]+\b)"," ", text)
+    text = re.sub(r"([\w\.-]+@[\w\.-]+\b)", " repmail ", text)
+    text = re.sub(r"((http|https|ftp)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*)"," rpwbst ", text)
+    text = re.sub(r"(\d+/\d+/\d+)", " repdate ", text)
+    text = re.sub(r"(\d+:\d+:\d+)|(\d+:\d+)", " reptime ", text)
+    text = re.sub(r"\d+.\d+.\d+", " repvrson ", text)
+    text = re.sub(r"\$\S*\d", " dollars 1", text)
+    text = re.sub(r"\d*.\d+", " repfrctn ", text)
     for num_start in range(len(text)):
         if text[num_start].isdigit():
             num_end = num_start
             while True:
                 num_end += 1
-                if not text[num_end].isdigit() or num_end > len(text):
+                if num_end >= len(text) or not text[num_end].isdigit():
                     break
             try:
                 text = text.replace(text[num_start: num_end], " "+num2words(int(text[num_start: num_end])) + " ")
