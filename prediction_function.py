@@ -6,6 +6,8 @@ from features import *
 from collections import Counter
 import  os.path
 import sys
+PSPAM = 0.8
+PHAM = 1 - PSPAM
 ham,spam,hamCounter,spamCounter=remove_big_words_from_list()
 counter = hamCounter + spamCounter
 def word_spam_probability(word):
@@ -25,11 +27,13 @@ def word_ham_probability(word):
 
 
 def classify_stemmed_text(txt):
-    pham = 0    # on log scale
-    pspam = 0   # on log scale
+    pham =  log10(1-PHAM) - log10(PHAM)   # likely hood of ham on log scale
+    pspam = log10(1-PSPAM) - log10(PSPAM)   # likely hood of spam log scale
     for word in txt.split(" "):
-        pspam -= log10(word_spam_probability(word))
-        pham -= log10(word_ham_probability(word))
+        wsp = word_spam_probability(word) # word spam probability
+        pspam += log10(1-wsp) - log10(wsp)
+        whp = word_ham_probability(word) # word ham probability
+        pham += log10(1-whp) - log10(whp)
     if pham < pspam:
         return "HAM"
     else:
@@ -62,5 +66,6 @@ if __name__ == '__main__':
                 spam_mails+=1
             else:
                 ham_mails+=1
-    print("ham : "+ str(1.0*ham_mails/total))
-    print("spam: " + str(1.0*spam_mails/total))
+    print("\nham : "+ str(ham_mails))
+    print("spam: " + str(spam_mails))
+    print("total: " + str(total))
